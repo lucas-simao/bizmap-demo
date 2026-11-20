@@ -1,0 +1,7 @@
+{
+  "name": "bizmap-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fictitious shop API used to demo the BizMap PR impact comment",
+  "dependencies": { "express": "^4.19.2", "pg": "^8.11.3" }
+}
