@@ -1,7 +1,7 @@
 import express from "express";
 import { createCustomer, getCustomer } from "./customers";
 import { getStock } from "./inventory";
-import { getOrder, markPaid, placeOrder } from "./orders";
+import { cancelOrder, getOrder, markPaid, placeOrder } from "./orders";
 
 const app = express();
 app.use(express.json());
@@ -30,6 +30,11 @@ app.get("/orders/:id", async (req, res) => {
 
 app.post("/orders/:id/paid", async (req, res) => {
   await markPaid(Number(req.params.id));
+  res.status(204).end();
+});
+
+app.post("/orders/:id/cancel", async (req, res) => {
+  await cancelOrder(Number(req.params.id));
   res.status(204).end();
 });
 

@@ -28,3 +28,10 @@ export async function getOrder(id: number) {
 export async function markPaid(id: number) {
   await pool.query("UPDATE orders SET status = 'paid' WHERE id = $1", [id]);
 }
+
+/** Cancels an unpaid order and returns its units to stock. */
+export async function cancelOrder(id: number) {
+  const order = await getOrder(id);
+  await pool.query("UPDATE orders SET status = 'cancelled' WHERE id = $1 AND status = 'pending'", [id]);
+  await pool.query("UPDATE inventory SET stock = stock + $2 WHERE sku = $1", [order.sku, order.quantity]);
+}
