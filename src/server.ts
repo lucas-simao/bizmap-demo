@@ -54,7 +54,6 @@ app.post("/orders/:id/deliver", async (req, res) => {
 app.post("/orders/:id/return", async (req, res) => {
   await markReturned(Number(req.params.id));
   await pool.query("UPDATE orders SET status = 'returned' WHERE id = $1", [req.params.id]);
-  await pool.query("UPDATE customers SET email = lower(email) WHERE id = $1", [req.body.customerId]);
   res.status(204).end();
 });
 
