@@ -9,8 +9,8 @@ export async function placeOrder(customerId: number, sku: string, quantity: numb
   }
   await reserveStock(sku, quantity);
   const { rows } = await pool.query(
-    "INSERT INTO orders (customer_id, sku, quantity, status) VALUES ($1, $2, $3, 'pending') RETURNING id",
-    [customerId, sku, quantity],
+    "INSERT INTO orders (customer_id, sku, quantity, status, discount_pct) VALUES ($1, $2, $3, 'pending', $4) RETURNING id",
+    [customerId, sku, quantity, quantity >= 20 ? 15 : quantity >= 10 ? 10 : 0],
   );
   return rows[0].id as number;
 }
@@ -27,4 +27,11 @@ export async function getOrder(id: number) {
 /** Marks an order as paid. */
 export async function markPaid(id: number) {
   await pool.query("UPDATE orders SET status = 'paid' WHERE id = $1", [id]);
+}
+
+/** Cancels an unpaid order and returns its units to stock. */
+export async function cancelOrder(id: number) {
+  const order = await getOrder(id);
+  await pool.query("UPDATE orders SET status = 'cancelled' WHERE id = $1 AND status = 'pending'", [id]);
+  await pool.query("UPDATE inventory SET stock = stock + $2 WHERE sku = $1", [order.sku, order.quantity]);
 }
