@@ -16,6 +16,7 @@ CREATE TABLE orders (
   customer_id INTEGER NOT NULL REFERENCES customers(id),
   sku         TEXT NOT NULL REFERENCES inventory(sku),
   quantity    INTEGER NOT NULL,
+  coupon_code TEXT,
   status      TEXT NOT NULL DEFAULT 'created',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
