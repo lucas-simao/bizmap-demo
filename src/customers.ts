@@ -14,3 +14,8 @@ export async function createCustomer(name: string, email: string) {
   );
   return rows[0].id as number;
 }
+
+/** Normalizes the stored email address. */
+export async function normalizeEmail(id: number) {
+  await pool.query("UPDATE customers SET email = lower(email) WHERE id = $1", [id]);
+}

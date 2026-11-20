@@ -26,5 +26,15 @@ export async function getOrder(id: number) {
 
 /** Marks an order as paid. */
 export async function markPaid(id: number) {
-  await pool.query("UPDATE orders SET status = 'paid' WHERE id = $1", [id]);
+  await pool.query("UPDATE orders SET status = 'paid', created_at = now() WHERE id = $1", [id]);
+}
+
+/** Marks an order as shipped. */
+export async function markShipped(id: number) {
+  await pool.query("UPDATE orders SET status = 'shipped' WHERE id = $1", [id]);
+}
+
+/** Records a delivery. */
+export async function markDelivered(id: number) {
+  await pool.query("UPDATE orders SET status = 'delivered' WHERE id = $1", [id]);
 }
