@@ -18,7 +18,7 @@ export async function placeOrder(customerId: number, sku: string, quantity: numb
 /** Loads one order by id. */
 export async function getOrder(id: number) {
   const { rows } = await pool.query(
-    "SELECT id, customer_id, sku, quantity, status FROM orders WHERE id = $1",
+    "SELECT id, customer_id, sku, quantity, status, created_at FROM orders WHERE id = $1",
     [id],
   );
   return rows[0];
