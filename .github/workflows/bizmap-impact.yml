@@ -1,0 +1,16 @@
+name: BizMap impact
+on: pull_request            # not pull_request_target: never run PR code with a write token
+permissions:
+  contents: read
+  pull-requests: write
+concurrency:                # two quick pushes must not race to create two comments
+  group: bizmap-impact-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  bizmap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lucas-simao/bizmap@d0c922788b2457ae8d5678f0fa0922027416debd # v0.3.5
+        with:
+          path: .
