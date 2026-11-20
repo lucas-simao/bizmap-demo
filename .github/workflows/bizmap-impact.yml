@@ -11,6 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: lucas-simao/bizmap@d0c922788b2457ae8d5678f0fa0922027416debd # v0.3.5
+      - uses: lucas-simao/bizmap@7b07373225ded461b7f16a9c334584ab140eac34 # main (7b07373)
         with:
           path: .
