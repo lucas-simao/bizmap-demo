@@ -9,8 +9,8 @@ export async function placeOrder(customerId: number, sku: string, quantity: numb
   }
   await reserveStock(sku, quantity);
   const { rows } = await pool.query(
-    "INSERT INTO orders (customer_id, sku, quantity, status) VALUES ($1, $2, $3, 'pending') RETURNING id",
-    [customerId, sku, quantity],
+    "INSERT INTO orders (customer_id, sku, quantity, status, discount_pct) VALUES ($1, $2, $3, 'pending', $4) RETURNING id",
+    [customerId, sku, quantity, quantity >= 10 ? 10 : 0],
   );
   return rows[0].id as number;
 }
