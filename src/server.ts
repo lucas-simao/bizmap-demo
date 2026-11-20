@@ -1,7 +1,8 @@
 import express from "express";
-import { createCustomer, getCustomer } from "./customers";
+import { pool } from "./db";
+import { createCustomer, getCustomer, normalizeEmail } from "./customers";
 import { getStock } from "./inventory";
-import { getOrder, markPaid, placeOrder } from "./orders";
+import { getOrder, markDelivered, markReturned, markPaid, markShipped, placeOrder } from "./orders";
 
 const app = express();
 app.use(express.json());
@@ -28,8 +29,31 @@ app.get("/orders/:id", async (req, res) => {
   res.json(await getOrder(Number(req.params.id)));
 });
 
+// extra work: also normalizes the customer email
 app.post("/orders/:id/paid", async (req, res) => {
   await markPaid(Number(req.params.id));
+  await normalizeEmail(req.body.customerId);
+  res.status(204).end();
+});
+
+// pass-through to one helper
+app.post("/orders/:id/ship", async (req, res) => {
+  await markShipped(Number(req.params.id));
+  await pool.query("UPDATE orders SET status = 'shipped' WHERE id = $1", [req.params.id]);
+  res.status(204).end();
+});
+
+// calls two changed helpers with the same impact
+app.post("/orders/:id/deliver", async (req, res) => {
+  await markShipped(Number(req.params.id));
+  await markDelivered(Number(req.params.id));
+  res.status(204).end();
+});
+
+// own SQL on top of the helper
+app.post("/orders/:id/return", async (req, res) => {
+  await markReturned(Number(req.params.id));
+  await pool.query("UPDATE orders SET status = 'returned' WHERE id = $1", [req.params.id]);
   res.status(204).end();
 });
 
