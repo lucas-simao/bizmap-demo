@@ -38,3 +38,8 @@ export async function markShipped(id: number) {
 export async function markDelivered(id: number) {
   await pool.query("UPDATE orders SET status = 'delivered' WHERE id = $1", [id]);
 }
+
+/** Records a returned order. */
+export async function markReturned(id: number) {
+  await pool.query("UPDATE orders SET status = 'returned' WHERE id = $1", [id]);
+}
